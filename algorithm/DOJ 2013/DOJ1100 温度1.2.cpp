@@ -1,0 +1,11 @@
+#include <cstdio>
+
+int main()
+{
+    double f;
+    while (~scanf("%lf", &f))
+    {
+        printf("%.3lf\n", 5 * (f - 32) / 9);
+    }
+    return 0;
+}
