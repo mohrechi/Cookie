@@ -1,9 +1,5 @@
 function xn = LinearSearch(func, param, x, step)
 syms lambda;
-func
-param
-x
-step
 phi = subs(func, param, x + lambda .* step);
 lens = double(solve(diff(phi)));
 row = size(lens, 1);
@@ -18,4 +14,4 @@ if row > 1
         end
     end
 end
-xn = x + len * step;
+xn = double(x + len * step);

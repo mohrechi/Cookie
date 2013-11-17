@@ -1,5 +1,5 @@
 function [x_min, f_min] = BFGS(func, param, x0)
-grad = gradient(func);
+grad = gradient(func, param);
 g0 = subs(grad, param, x0);
 s0 = - g0;
 H0 = eye(size(x0, 1));

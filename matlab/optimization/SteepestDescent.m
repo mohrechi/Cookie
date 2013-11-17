@@ -1,8 +1,8 @@
 function [x_min, f_min] = SteepestDescent(func, param, x0)
-grad = gradient(func);
+grad = gradient(func, param);
 x = x0;
 for i = 1 : 100
-    g = subs(grad, param, x);
+    g = double(subs(grad, param, x));
     if norm(g) < 1e-6
         break
     end

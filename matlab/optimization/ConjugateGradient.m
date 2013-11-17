@@ -1,10 +1,10 @@
 function [x_min, f_min] = ConjugateGradient(func, param, x0)
-grad = gradient(func);
-g0 = subs(grad, param, x0);
+grad = gradient(func, param);
+g0 = double(subs(grad, param, x0));
 s0 = - g0;
 x1 = LinearSearch(func, param, x0, s0);
 for i = 1 : 100
-    g1 = subs(grad, param, x1);
+    g1 = double(subs(grad, param, x1));
     if norm(g1) < 1e-6
         break
     end
