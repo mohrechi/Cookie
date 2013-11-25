@@ -1,4 +1,5 @@
-function [x_min, f_min] = ActiveSetMethod(G, g, c, A, b, x0)
+function [x_min, f_min, lambda_min] = ActiveSetMethod(G, g, c, A, b)
+x0 = zeros(size(g, 1), 1);
 m = size(b, 1);
 find = 1;
 for i = 1 : 100
@@ -21,9 +22,9 @@ for i = 1 : 100
     gtmp = G * x0 + g;
     [d, ~, lambda] = EqualityQuadratic(Gtmp, gtmp, Atmp, btmp);
     if norm(d) < 1e-6
-        index = 1;
-        minLambda = lambda(1);
-        for j = 2 : size(lambda, 1)
+        index = -1;
+        minLambda = 1e100;
+        for j = 1 : size(J, 1)
             if lambda(j) < minLambda
                 minLambda = lambda(j);
                 index = j;
@@ -64,3 +65,7 @@ for i = 1 : 100
 end
 x_min = x0;
 f_min = 0.5 * x_min' * G * x_min + g' * x_min + c;
+lambda_min = zeros(m, 1);
+for i = 1 : size(J, 1)
+    lambda_min(J(i)) = lambda(i);
+end
