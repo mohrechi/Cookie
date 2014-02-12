@@ -1,3 +1,7 @@
+//#define METHOD_SPLAY_POINTER
+#define METHOD_SPLAY_INDEX
+
+#ifdef METHOD_SPLAY_POINTER
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
@@ -274,3 +278,325 @@ int main()
     }
     return 0;
 }
+#endif // METHOD_SPLAY_POINTER
+#ifdef METHOD_SPLAY_INDEX
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+const int MAXN = 100001 + 10;
+const int MAXM = 50001 + 10;
+const int INF = 0x7fffffff;
+
+class Splay
+{
+public:
+    Splay()
+    {
+        clear();
+    }
+    void clear()
+    {
+        root = -1;
+        nodeNum = 0;
+        insert(-INF, root);
+        insert(INF, root);
+    }
+    void insert(int value)
+    {
+        insert(value, root);
+    }
+    void remove(int value)
+    {
+        int k = getK(value, root);
+        int indexL = query(k - 1, root);
+        splay(indexL, -1);
+        int indexR = query(k + 1, root);
+        splay(indexR, indexL);
+        node[indexR].left = -1;
+        update(indexR);
+        update(indexL);
+    }
+    int query(int k)
+    {
+        int index = query(k + 1, root);
+        return node[index].value;
+    }
+private:
+    struct TreeNode
+    {
+        int parent;
+        int left, right;
+        int value;
+        int size;
+    } node[MAXN];
+    int nodeNum, root;
+    void initNode(int value)
+    {
+        node[nodeNum].parent = -1;
+        node[nodeNum].left = -1;
+        node[nodeNum].right = -1;
+        node[nodeNum].value = value;
+        node[nodeNum].size = 1;
+    }
+    int getLeftNum(int index)
+    {
+        if (-1 == node[index].left)
+        {
+            return 0;
+        }
+        return node[node[index].left].size;
+    }
+    int getRightNum(int index)
+    {
+        if (-1 == node[index].right)
+        {
+            return 0;
+        }
+        return node[node[index].right].size;
+    }
+    void update(int index)
+    {
+        node[index].size = 1;
+        node[index].size += getLeftNum(index);
+        node[index].size += getRightNum(index);
+    }
+    void insert(int value, int index)
+    {
+        if (-1 == root)
+        {
+            root = nodeNum;
+            initNode(value);
+            ++nodeNum;
+            return;
+        }
+        while (true)
+        {
+            if (value < node[index].value)
+            {
+                if (-1 == node[index].left)
+                {
+                    node[index].left = nodeNum;
+                    break;
+                }
+                else
+                {
+                    index = node[index].left;
+                }
+            }
+            else
+            {
+                if (-1 == node[index].right)
+                {
+                    node[index].right = nodeNum;
+                    break;
+                }
+                else
+                {
+                    index = node[index].right;
+                }
+            }
+        }
+        initNode(value);
+        node[nodeNum].parent = index;
+        splay(nodeNum, root);
+        ++nodeNum;
+    }
+    int query(int k, int index)
+    {
+        while (k != getLeftNum(index) + 1)
+        {
+            if (k <= getLeftNum(index))
+            {
+                index = node[index].left;
+            }
+            else
+            {
+                k -= getLeftNum(index) + 1;
+                index = node[index].right;
+            }
+        }
+        return index;
+    }
+    int getK(int value, int index, int sum = 1)
+    {
+        while (value != node[index].value)
+        {
+            if (value < node[index].value)
+            {
+                index = node[index].left;
+            }
+            else
+            {
+                sum += getLeftNum(index) + 1;
+                index = node[index].right;
+            }
+        }
+        return sum + getLeftNum(index);
+    }
+    void rotateLeft(int index)
+    {
+        int left = node[index].left;
+        int parent = node[index].parent;
+        int ancestor = node[parent].parent;
+        if (-1 == ancestor)
+        {
+            root = index;
+        }
+        else
+        {
+            if (node[ancestor].left == parent)
+            {
+                node[ancestor].left = index;
+            }
+            else
+            {
+                node[ancestor].right = index;
+            }
+        }
+        node[index].parent = ancestor;
+        node[index].left = parent;
+        node[parent].parent = index;
+        node[parent].right = left;
+        if (-1 != left)
+        {
+            node[left].parent = parent;
+        }
+        update(parent);
+        update(index);
+    }
+    void rotateRight(int index)
+    {
+        int right = node[index].right;
+        int parent = node[index].parent;
+        int ancestor = node[parent].parent;
+        if (-1 == ancestor)
+        {
+            root = index;
+        }
+        else
+        {
+            if (node[ancestor].left == parent)
+            {
+                node[ancestor].left = index;
+            }
+            else
+            {
+                node[ancestor].right = index;
+            }
+        }
+        node[index].parent = ancestor;
+        node[index].right = parent;
+        node[parent].parent = index;
+        node[parent].left = right;
+        if (-1 != right)
+        {
+            node[right].parent = parent;
+        }
+        update(parent);
+        update(index);
+    }
+    void splay(int index, int pos)
+    {
+        while (node[index].parent != pos)
+        {
+            int parent = node[index].parent;
+            int ancestor = node[parent].parent;
+            if (ancestor == pos)
+            {
+                if (node[parent].left == index)
+                {
+                    rotateRight(index);
+                }
+                else
+                {
+                    rotateLeft(index);
+                }
+            }
+            else
+            {
+                if (node[ancestor].left == parent)
+                {
+                    if (node[parent].left == index)
+                    {
+                        rotateRight(parent);
+                        rotateRight(index);
+                    }
+                    else
+                    {
+                        rotateLeft(index);
+                        rotateRight(index);
+                    }
+                }
+                else
+                {
+                    if (node[parent].right == index)
+                    {
+                        rotateLeft(parent);
+                        rotateLeft(index);
+                    }
+                    else
+                    {
+                        rotateRight(index);
+                        rotateLeft(index);
+                    }
+                }
+            }
+        }
+    }
+};
+
+int n, m;
+int a[MAXN];
+struct Query
+{
+    int left;
+    int right;
+    int k;
+    int index;
+    bool operator <(const Query &query) const
+    {
+        return right < query.right;
+    }
+} query[MAXM];
+int ans[MAXM];
+Splay splay;
+
+int main()
+{
+    while (~scanf("%d%d", &n, &m))
+    {
+        for (int i = 1; i <= n; ++i)
+        {
+            scanf("%d", &a[i]);
+        }
+        for (int i = 0; i < m; ++i)
+        {
+            query[i].index = i;
+            scanf("%d%d%d", &query[i].left, &query[i].right, &query[i].k);
+        }
+        sort(query, query + m);
+        int left = 1, right = 0;
+        splay.clear();
+        for (int i = 0; i < m; ++i)
+        {
+            for (int j = left; j <= right && j < query[i].left; ++j)
+            {
+                splay.remove(a[j]);
+            }
+            left = query[i].left;
+            for (int j = max(right + 1, query[i].left); j <= query[i].right; ++j)
+            {
+                splay.insert(a[j]);
+            }
+            right = query[i].right;
+            ans[query[i].index] = splay.query(query[i].k);
+        }
+        for (int i = 0; i < m; ++i)
+        {
+            printf("%d\n", ans[i]);
+        }
+    }
+    return 0;
+}
+#endif

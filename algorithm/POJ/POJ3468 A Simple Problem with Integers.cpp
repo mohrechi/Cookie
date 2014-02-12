@@ -452,13 +452,46 @@ void Splay::splay(int index, int pos)
     while (node[index].parent != pos)
     {
         int parent = node[index].parent;
-        if (node[parent].left == index)
+        int ancestor = node[parent].parent;
+        if (ancestor == pos)
         {
-            rotateRight(index);
+            if (node[parent].left == index)
+            {
+                rotateRight(index);
+            }
+            else
+            {
+                rotateLeft(index);
+            }
         }
         else
         {
-            rotateLeft(index);
+            if (node[ancestor].left == parent)
+            {
+                if (node[parent].left == index)
+                {
+                    rotateRight(parent);
+                    rotateRight(index);
+                }
+                else
+                {
+                    rotateLeft(index);
+                    rotateRight(index);
+                }
+            }
+            else
+            {
+                if (node[parent].right == index)
+                {
+                    rotateLeft(parent);
+                    rotateLeft(index);
+                }
+                else
+                {
+                    rotateRight(index);
+                    rotateLeft(index);
+                }
+            }
         }
     }
 }
