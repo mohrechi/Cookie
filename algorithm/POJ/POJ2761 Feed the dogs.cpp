@@ -3,7 +3,9 @@
 //#define METHOD_BST
 //#define METHOD_SPLAY_POINTER
 //#define METHOD_SPLAY_INDEX
+//#define METHOD_AVL
 //#define METHOD_TREAP
+//#define METHOD_PARTITION_TREE
 //#define METHOD_SBT
 
 #ifdef METHOD_BIT
@@ -1172,6 +1174,280 @@ int main()
 }
 #endif // METHOD_SPLAY_INDEX
 
+#ifdef METHOD_AVL
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+const int MAXN = 100000 + 10;
+const int MAXM = 50000 + 10;
+
+class AVL
+{
+public:
+    AVL()
+    {
+    }
+    void clear()
+    {
+        root = -1;
+        nodeNum = 0;
+    }
+    void insert(int value)
+    {
+        if (-1 == root)
+        {
+            initNode(value);
+            root = nodeNum++;
+            return;
+        }
+        int index = root;
+        while (true)
+        {
+            int dir = value >= node[index].value;
+            if (-1 == node[index].child[dir])
+            {
+                node[index].child[dir] = nodeNum;
+                break;
+            }
+            else
+            {
+                index = node[index].child[dir];
+            }
+        }
+        initNode(value);
+        node[nodeNum++].parent = index;
+        while (-1 != index)
+        {
+            pushUp(index);
+            balance(index);
+            index = node[index].parent;
+        }
+    }
+    void remove(int value)
+    {
+        int index = root;
+        while (node[index].value != value)
+        {
+            int dir = value >= node[index].value;
+            index = node[index].child[dir];
+        }
+        while (!isLeaf(index))
+        {
+            if (-1 != node[index].child[LEFT])
+            {
+                rotate(node[index].child[LEFT], RIGHT);
+            }
+            if (-1 != node[index].child[RIGHT])
+            {
+                rotate(node[index].child[RIGHT], LEFT);
+            }
+        }
+        int parent = node[index].parent;
+        if (-1 == parent)
+        {
+            root = -1;
+        }
+        else
+        {
+            int dir = node[parent].child[RIGHT] == index;
+            node[parent].child[dir] = -1;
+        }
+        index = parent;
+        while (-1 != index)
+        {
+            pushUp(index);
+            balance(index);
+            index = node[index].parent;
+        }
+    }
+    int query(int k)
+    {
+        int index = root;
+        while (k != getChildNum(index, LEFT) + 1)
+        {
+            if (k <= getChildNum(index, LEFT))
+            {
+                index = node[index].child[LEFT];
+            }
+            else
+            {
+                k -= getChildNum(index, LEFT) + 1;
+                index = node[index].child[RIGHT];
+            }
+        }
+        return node[index].value;
+    }
+private:
+    enum Dir
+    {
+        LEFT = 0,
+        RIGHT = 1
+    };
+    struct Node
+    {
+        int parent;
+        int child[2];
+        int value;
+        int size;
+        int height;
+    } node[MAXN];
+    int nodeNum, root;
+    inline void initNode(int value)
+    {
+        node[nodeNum].parent = -1;
+        node[nodeNum].child[LEFT] = -1;
+        node[nodeNum].child[RIGHT] = -1;
+        node[nodeNum].value = value;
+        node[nodeNum].size = 1;
+        node[nodeNum].height = 1;
+    }
+    inline int getChildNum(int index, int dir)
+    {
+        int child = node[index].child[dir];
+        if (-1 == child)
+        {
+            return 0;
+        }
+        return node[child].size;
+    }
+    inline int getChildHeight(int index, int dir)
+    {
+        int child = node[index].child[dir];
+        if (-1 == child)
+        {
+            return 0;
+        }
+        return node[child].height;
+    }
+    inline bool isLeaf(int index)
+    {
+        return -1 == node[index].child[LEFT] && -1 == node[index].child[RIGHT];
+    }
+    inline void pushUp(int index)
+    {
+        node[index].size = 1;
+        node[index].size += getChildNum(index, LEFT);
+        node[index].size += getChildNum(index, RIGHT);
+        node[index].height = max(getChildHeight(index, LEFT), getChildHeight(index, RIGHT)) + 1;
+    }
+    inline void rotate(int index, int dir)
+    {
+        int child = node[index].child[dir];
+        int parent = node[index].parent;
+        int ancestor = node[parent].parent;
+        if (-1 == ancestor)
+        {
+            root = index;
+        }
+        else
+        {
+            node[ancestor].child[node[ancestor].child[RIGHT] == parent] = index;
+        }
+        node[index].parent = ancestor;
+        node[index].child[dir] = parent;
+        node[parent].parent = index;
+        node[parent].child[!dir] = child;
+        if (-1 != child)
+        {
+            node[child].parent = parent;
+        }
+        pushUp(parent);
+        pushUp(index);
+    }
+    void balance(int index)
+    {
+        int L = node[index].child[LEFT];
+        int R = node[index].child[RIGHT];
+        int heightL = getChildHeight(index, LEFT);
+        int heightR = getChildHeight(index, RIGHT);
+        if (heightL - heightR > 1)
+        {
+            int LR = node[L].child[RIGHT];
+            int heightLL = getChildHeight(L, LEFT);
+            int heightLR = getChildHeight(L, RIGHT);
+            if (heightLL >= heightLR)
+            {
+                rotate(L, RIGHT);
+            }
+            else
+            {
+                rotate(LR, LEFT);
+                rotate(LR, RIGHT);
+            }
+        }
+        else if (heightR - heightL > 1)
+        {
+            int RL = node[R].child[LEFT];
+            int heightRR = getChildHeight(R, RIGHT);
+            int heightRL = getChildHeight(R, LEFT);
+            if (heightRR >= heightRL)
+            {
+                rotate(R, LEFT);
+            }
+            else
+            {
+                rotate(RL, RIGHT);
+                rotate(RL, LEFT);
+            }
+        }
+    }
+} avl;
+
+int n, m;
+int a[MAXN];
+struct Query
+{
+    int left;
+    int right;
+    int k;
+    int index;
+    bool operator <(const Query &query) const
+    {
+        return right < query.right;
+    }
+} query[MAXM];
+int ans[MAXM];
+
+int main()
+{
+    while (~scanf("%d%d", &n, &m))
+    {
+        for (int i = 1; i <= n; ++i)
+        {
+            scanf("%d", &a[i]);
+        }
+        for (int i = 0; i < m; ++i)
+        {
+            query[i].index = i;
+            scanf("%d%d%d", &query[i].left, &query[i].right, &query[i].k);
+        }
+        sort(query, query + m);
+        int left = 1, right = 0;
+        avl.clear();
+        for (int i = 0; i < m; ++i)
+        {
+            for (int j = left; j <= right && j < query[i].left; ++j)
+            {
+                avl.remove(a[j]);
+            }
+            left = query[i].left;
+            for (int j = max(right + 1, query[i].left); j <= query[i].right; ++j)
+            {
+                avl.insert(a[j]);
+            }
+            right = query[i].right;
+            ans[query[i].index] = avl.query(query[i].k);
+        }
+        for (int i = 0; i < m; ++i)
+        {
+            printf("%d\n", ans[i]);
+        }
+    }
+    return 0;
+}
+#endif // METHOD_AVL
+
 #ifdef METHOD_TREAP
 #include <cstdio>
 #include <cstdlib>
@@ -1420,6 +1696,109 @@ int main()
     return 0;
 }
 #endif // METHOD_TREAP
+
+#ifdef METHOD_PARTITION_TREE
+#include <cstdio>
+#include <cstring>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+static const int MAXN = 100005;
+
+struct TreeNode
+{
+    int l, r;
+} node[MAXN<<2];
+
+int leftNumber[20][MAXN];
+int treeValue[20][MAXN];
+int sortedArray[MAXN];
+
+void buildTree(int l, int r, int c, int d)
+{
+    node[c].l = l;
+    node[c].r = r;
+    if (l == r)
+    {
+        return;
+    }
+    int mid = (l + r) >> 1;
+    int sameNumber = mid - l + 1;
+    for (int i = l; i <= r; ++i)
+    {
+        if (treeValue[d][i] < sortedArray[mid])
+        {
+            --sameNumber;
+        }
+    }
+    int pLeft = l, pRight = mid + 1;
+    for ( int i = l; i <= r; ++i)
+    {
+        leftNumber[d][i] = i == l ? 0 : leftNumber[d][i - 1];
+        if (treeValue[d][i] < sortedArray[mid])
+        {
+            treeValue[d + 1][pLeft++] = treeValue[d][i];
+            ++leftNumber[d][i];
+        }
+        else if (treeValue[d][i] > sortedArray[mid])
+        {
+            treeValue[d + 1][pRight++] = treeValue[d][i];
+        }
+        else if (sameNumber)
+        {
+            treeValue[d + 1][pLeft++] = treeValue[d][i];
+            ++leftNumber[d][i];
+            --sameNumber;
+        }
+        else
+        {
+            treeValue[d + 1][pRight++] = treeValue[d][i];
+        }
+    }
+    buildTree(l, mid, (c<<1)+1, d + 1);
+    buildTree(mid+1, r, (c<<1)+2, d + 1);
+}
+
+int query(int l, int r, int c, int d, int k)
+{
+    if (l == r)
+    {
+        return treeValue[d][l];
+    }
+    int lLeft = l == node[c].l ? 0 : leftNumber[d][l-1];
+    int rLeft = leftNumber[d][r];
+    int totalLeft = rLeft - lLeft;
+    if (k <= totalLeft)
+    {
+        return query(node[c].l + lLeft, node[c].l + rLeft - 1, (c << 1) + 1, d + 1, k);
+    }
+    int mid = (node[c].l + node[c].r) >> 1;
+    int lRight = l - node[c].l - lLeft;
+    int totalRight = r - l + 1 - totalLeft;
+    return query(mid + lRight + 1, mid + lRight + totalRight, (c << 1) + 2, d + 1, k - totalLeft);
+}
+
+int main(int argc, char *argv[])
+{
+    int n,m,l,r,k;
+    while (~scanf("%d%d", &n, &m))
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            scanf("%d", &sortedArray[i]);
+            treeValue[0][i] = sortedArray[i];
+        }
+        sort(sortedArray, sortedArray + n);
+        buildTree(0, n - 1, 0, 0);
+        while (m--)
+        {
+            scanf("%d%d%d", &l, &r, &k);
+            printf("%d\n", query(l - 1, r - 1, 0, 0, k));
+        }
+    }
+    return 0;
+}
+#endif // METHOD_PARTITION_TREE
 
 #ifdef METHOD_SBT
 #include <cstdio>
