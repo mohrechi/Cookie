@@ -1,8 +1,11 @@
+#coding=utf-8 
 import os
+import codecs
 
 names = []
 fileNum = []
 lineNum = []
+maxLineDict = {}
 for name in os.listdir('.'):
     if name == 'summary.py':
         continue
@@ -12,9 +15,11 @@ for name in os.listdir('.'):
     dir = os.path.join('.', name)
     for file in os.listdir(dir):
         fh = open(os.path.join(dir, file), "r")
-        fileNum[-1] = fileNum[-1] + 1
-        lineNum[-1] = lineNum[-1] + len(fh.readlines())
+        l = len(fh.readlines())
         fh.close()
+        fileNum[-1] = fileNum[-1] + 1
+        lineNum[-1] = lineNum[-1] + l
+        maxLineDict[l] = file
 for i in range(len(names)):
     for j in range(i + 1, len(names)):
         if lineNum[i] < lineNum[j]:
@@ -27,4 +32,11 @@ lineNum.append(sum(lineNum))
 for i in range(len(names)):
     space = ''.join([' ' for j in range(24 - len(names[i]))])
     print(names[i] + space + "File: " + str(fileNum[i]) + "\t\tLine: " + str(lineNum[i]))
-    
+print()
+count = 0
+for key in maxLineDict.keys():
+    count = count + 1
+    if len(maxLineDict) - count > 10:
+        continue
+    space = ''.join([' ' for i in range(10 - len(str(key)))])
+    print(str(key) + space)
