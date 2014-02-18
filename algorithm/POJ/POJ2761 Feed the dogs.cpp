@@ -7,6 +7,7 @@
 //#define METHOD_TREAP
 //#define METHOD_PARTITION_TREE
 //#define METHOD_SBT
+//#define METHOD_PERSISTENT_SEGMENT_TREE
 
 #ifdef METHOD_BIT
 #include <cstdio>
@@ -2127,3 +2128,123 @@ int main()
     return 0;
 }
 #endif // METHOD_SBT
+
+#ifdef METHOD_PERSISTENT_SEGMENT_TREE
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+const int MAXN = 100000 + 10;
+
+struct TreeNode
+{
+    int l, r;
+    int lc, rc;
+    int sum;
+} tree[MAXN * 20];
+int treeNum, root[MAXN];
+
+int build(int l, int r)
+{
+    int x = treeNum++;
+    tree[x].l = l;
+    tree[x].r = r;
+    tree[x].sum = 0;
+    if (l == r)
+    {
+        return x;
+    }
+    int mid = (l + r) >> 1;
+    tree[x].lc = build(l, mid);
+    tree[x].rc = build(mid + 1, r);
+    return x;
+}
+
+int update(int o, int pos, int val)
+{
+    int x = treeNum++;
+    tree[x] = tree[o];
+    tree[x].sum += val;
+    if (tree[o].l == tree[o].r)
+    {
+        return x;
+    }
+    int mid = (tree[x].l + tree[x].r) >> 1;
+    if (pos <= mid)
+    {
+        tree[x].lc = update(tree[o].lc, pos, val);
+    }
+    else
+    {
+        tree[x].rc = update(tree[o].rc, pos, val);
+    }
+    return x;
+}
+
+int query(int x, int o, int k)
+{
+    if (tree[x].l == tree[x].r)
+    {
+        return tree[x].l;
+    }
+    int num = tree[tree[x].lc].sum - tree[tree[o].lc].sum;
+    if (k <= num)
+    {
+        return query(tree[x].lc, tree[o].lc, k);
+    }
+    return query(tree[x].rc, tree[o].rc, k - num);
+}
+
+int n, m, c;
+int a[MAXN];
+struct Node
+{
+    int val, index;
+    bool operator <(const Node &node) const
+    {
+        return val < node.val;
+    }
+} node[MAXN];
+int pos[MAXN];
+
+int main()
+{
+    int l, r, k;
+    while (~scanf("%d%d", &n, &m))
+    {
+        treeNum = 0;
+        for (int i = 1; i <= n; ++i)
+        {
+            scanf("%d", &a[i]);
+            node[i].val = a[i];
+            node[i].index = i;
+        }
+        sort(node + 1, node + 1 + n);
+        pos[node[1].index] = 1;
+        int j = 1;
+        for (int i = 2; i <= n; ++i)
+        {
+            if (node[i].val == node[i - 1].val)
+            {
+                pos[node[i].index] = j;
+            }
+            else
+            {
+                pos[node[i].index] = ++j;
+                node[j] = node[i];
+            }
+        }
+        root[0] = build(1, j);
+        for (int i = 1; i <= n; ++i)
+        {
+            root[i] = update(root[i - 1], pos[i], 1);
+        }
+        for (int i = 0; i < m; ++i)
+        {
+            scanf("%d%d%d", &l, &r, &k);
+            printf("%d\n", node[query(root[r], root[l - 1], k)].val);
+        }
+    }
+    return 0;
+}
+#endif // METHOD_PERSISTENT_SEGMENT_TREE
