@@ -1,56 +1,44 @@
-#include <iostream>
+#include <cstdio>
 #include <cstring>
+#include <algorithm>
 using namespace std;
+const int MAXN = 200 + 10;
 
-bool used[1000];
-int sg[205][205];
+int sg[MAXN][MAXN];
 
-int getSG(int x, int y)
+int getSG(int w, int h)
 {
-    if(x>y)
+    if (sg[w][h] != -1)
     {
-        x^=y,y^=x,x^=y;
+        return sg[w][h];
     }
-    if(sg[x][y]!=-1)
+    bool visit[MAXN];
+    memset(visit, false, sizeof(visit));
+    for (int i = 2; i <= (w >> 1); ++i)
     {
-        return sg[x][y];
+        visit[getSG(i, h) ^ getSG(w - i, h)] = true;
     }
-    if(y<=3)
+    for (int i = 2; i <= (h >> 1); ++i)
     {
-        return sg[x][y]=0;
+        visit[getSG(w, i) ^ getSG(w, h - i)] = true;
     }
-    memset(used, false, sizeof(used));
-    for(int i=2;i<=x/2;i++)
+    for (int i = 0; i < MAXN; ++i)
     {
-        used[getSG(i,y)^getSG(x-i,y)] = true;
+        if (!visit[i])
+        {
+            return sg[w][h] = i;
+        }
     }
-    for(int i=2;i<=y/2;i++)
-    {
-        used[getSG(x,i)^getSG(x,y-i)] = true;
-    }
-    int i;
-    for(i=0;used[i];i++);
-    return sg[x][y] = i;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
-	int w,h;
-	memset(sg,-1,sizeof(sg));
-	while(cin>>w>>h)
-	{
-	    if(w==1 || h==1)
-	    {
-	        cout<<"WIN"<<endl;
-	    }
-	    else if(getSG(w,h))
-	    {
-	        cout<<"WIN"<<endl;
-	    }
-	    else
-	    {
-	        cout<<"LOSE"<<endl;
-	    }
-	}
-	return 0;
+    int w, h;
+    memset(sg, -1, sizeof(sg));
+    sg[1][1] = 0;
+    while (~scanf("%d%d", &w, &h))
+    {
+        puts(getSG(w, h) ? "WIN": "LOSE");
+    }
+    return 0;
 }
