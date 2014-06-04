@@ -2,39 +2,41 @@
 #include <cstring>
 #include <algorithm>
 using namespace std;
+const int MAXN = 105;
 
-int ans;
+int pn[MAXN][MAXN];
 
-void gcd(int a, int b)
+int getPN(int a, int b)
 {
+    if (a < b)
+    {
+        return getPN(b, a);
+    }
+    if (pn[a][b] != -1)
+    {
+        return pn[a][b];
+    }
     if (b == 0)
     {
-        --ans;
-        return;
+        return pn[a][b] = false;
     }
-    if (a / b >= 2)
+    for (int i = b; i <= a; i += b)
     {
-        return;
+        if (!getPN(a - i, b))
+        {
+            return pn[a][b] = true;
+        }
     }
-    ++ans;
-    gcd(b, a % b);
+    return pn[a][b] = false;
 }
 
 int main()
 {
     int a, b;
+    memset(pn, -1, sizeof(pn));
     while (scanf("%d%d", &a, &b), a || b)
     {
-        ans = 0;
-        gcd(max(a, b), min(a, b));
-		if (ans & 1)
-        {
-            puts("Kousaka kirino wins");
-        }
-		else
-        {
-            puts("newSolar wins");
-        }
+        puts(getPN(a, b) ? "newSolar wins" : "Kousaka kirino wins");
     }
     return 0;
 }
