@@ -1,122 +1,94 @@
-#include <cmath>
 #include <cstdio>
 #include <cstring>
-#include <vector>
 #include <algorithm>
 using namespace std;
-const int MAXN = 205;
+const int MAXN = 200 + 10;
 
 int n, m;
-struct Edge
-{
-    int u, v, w;
-} edge[MAXN * MAXN];
 int dist[MAXN][MAXN];
+bool path[MAXN][MAXN];
 
-bool judge(int d, int u, int v, int w)
+struct Node
 {
-    vector<pair<int, int> > list;
-    for(int i=1;i<=n;++i)
+    int distU, distV;
+    bool operator <(const Node &node) const
     {
-        int l = d - dist[i][u];
-        int r = d - dist[i][v];
-        if(l >= w)
+        if (distU == node.distU)
         {
-            continue;
+            return distV < node.distV;
         }
-        if(r >= w)
-        {
-            continue;
-        }
-        if(l < 0)
-        {
-            l = -1;
-        }
-        if(r < 0)
-        {
-            r = -1;
-        }
-        if(l == -1 && r == -1)
-        {
-            return false;
-        }
-        if(l + r >= w - 1)
-        {
-            continue;
-        }
-        list.push_back(make_pair(l + 1, w - r - 1));
+        return distU < node.distU;
     }
-    if(list.empty())
-    {
-        return true;
-    }
-    sort(list.begin(), list.end());
-    int r = 0;
-    for(int i=0;i<list.size();++i)
-    {
-        if(r < list[i].first)
-        {
-            return true;
-        }
-        r = max(r, list[i].second + 1);
-    }
-    return false;
-}
-
-bool judge(int d)
-{
-    for(int i=0;i<m;++i)
-    {
-        if(judge(d, edge[i].u, edge[i].v, edge[i].w))
-        {
-            return true;
-        }
-    }
-    return false;
-}
+} node[MAXN];
 
 int main()
 {
-    while(~scanf("%d%d", &n, &m))
+    int u, v, w;
+    scanf("%d%d", &n, &m);
+    memset(dist, 0x3f, sizeof(dist));
+    memset(path, false, sizeof(path));
+    while (m--)
     {
-        memset(dist, 0x3f, sizeof(dist));
-        for(int i=0;i<m;++i)
+        scanf("%d%d%d", &u, &v, &w);
+        dist[u][v] = dist[v][u] = w;
+        path[u][v] = path[v][u] = true;
+    }
+    for (int i = 1; i <= n; ++i)
+    {
+        dist[i][i] = 0;
+    }
+    for (int k = 1; k <= n; ++k)
+    {
+        for (int i = 1; i <= n; ++i)
         {
-            scanf("%d%d%d", &edge[i].u, &edge[i].v, &edge[i].w);
-            edge[i].w <<= 1;
-            dist[edge[i].u][edge[i].v] = edge[i].w;
-            dist[edge[i].v][edge[i].u] = edge[i].w;
-        }
-        for(int i=1;i<=n;++i)
-        {
-            dist[i][i] = 0;
-        }
-        for(int k=1;k<=n;++k)
-        {
-            for(int i=1;i<=n;++i)
+            for (int j = 1; j <= n; ++j)
             {
-                for(int j=1;j<=n;++j)
+                if (dist[i][j] > dist[i][k] + dist[k][j])
                 {
-                    dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+                    dist[i][j] = dist[i][k] + dist[k][j];
                 }
             }
         }
-        int l = 0, r = 1e8;
-        int ans = 1e8;
-        while(l <= r)
-        {
-            int mid = (l + r) * 0.5;
-            if(judge(mid))
-            {
-                ans = min(ans, mid);
-                r = mid - 1;
-            }
-            else
-            {
-                l = mid + 1;
-            }
-        }
-        printf("%lf\n", ans * 0.5);
     }
+    double ans = 1e100;
+    node[0].distU = -1;
+    node[0].distV = 0x3f3f3f3f;
+    for (int u = 1; u <= n; ++u)
+    {
+        for (int v = u + 1; v <= n; ++v)
+        {
+            if (!path[u][v])
+            {
+                continue;
+            }
+            for (int i = 1; i <= n; ++i)
+            {
+                node[i].distU = dist[u][i];
+                node[i].distV = dist[v][i];
+            }
+            sort(node + 1, node + n + 1);
+            m = 0;
+            int maxV = 0;
+            for (int i = 1; i <= n; ++i)
+            {
+                maxV = max(maxV, node[i].distV);
+                while (node[i].distU >= node[m].distU && node[i].distV >= node[m].distV)
+                {
+                    --m;
+                }
+                node[++m] = node[i];
+            }
+            ans = min(ans, (double)maxV);
+            for (int i = 1; i < m; ++i)
+            {
+                if (node[i + 1].distV < node[i].distV)
+                {
+                    ans = min(ans, node[i].distU + (dist[u][v] + node[i + 1].distV - node[i].distU) * 0.5);
+                }
+            }
+            ans = min(ans, (double)node[m].distU);
+        }
+    }
+    printf("%.1f\n", ans);
     return 0;
 }
