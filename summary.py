@@ -1,42 +1,40 @@
-#coding=utf-8 
 import os
 import codecs
 
+def count_num(path):
+    file_num = 0
+    line_num = 0
+    for dir_name in os.listdir(path):
+        file_path = os.path.join(path, dir_name)
+        if os.path.isdir(file_path):
+            dir_file_num, dir_line_num = count_num(file_path)
+            file_num = file_num + dir_file_num
+            line_num = line_num + dir_line_num
+        else:
+            with open(file_path) as file_handle:
+                file_num = file_num + 1
+                line_num = line_num + len(file_handle.readlines())
+    return file_num, line_num
+
 names = []
-fileNum = []
-lineNum = []
-maxLineDict = {}
+file_nums = []
+line_nums = []
 for name in os.listdir('.'):
-    if name == 'summary.py':
+    if name[0] == '.' or name == 'summary.py':
         continue
     names.append(name)
-    fileNum.append(0)
-    lineNum.append(0)
-    dir = os.path.join('.', name)
-    for file in os.listdir(dir):
-        fh = open(os.path.join(dir, file), "r")
-        l = len(fh.readlines())
-        fh.close()
-        fileNum[-1] = fileNum[-1] + 1
-        lineNum[-1] = lineNum[-1] + l
-        maxLineDict[l] = file
+    file_nums.append(0)
+    line_nums.append(0)
+    file_nums[-1], line_nums[-1] = count_num(name)
 for i in range(len(names)):
     for j in range(i + 1, len(names)):
-        if lineNum[i] < lineNum[j]:
+        if line_nums[i] < line_nums[j]:
             names[i], names[j] = names[j], names[i]
-            fileNum[i], fileNum[j] = fileNum[j], fileNum[i]
-            lineNum[i], lineNum[j] = lineNum[j], lineNum[i]
-names.append("Total")
-fileNum.append(sum(fileNum))
-lineNum.append(sum(lineNum))
+            file_nums[i], file_nums[j] = file_nums[j], file_nums[i]
+            line_nums[i], line_nums[j] = line_nums[j], line_nums[i]
+names.append('Total')
+file_nums.append(sum(file_nums))
+line_nums.append(sum(line_nums))
 for i in range(len(names)):
     space = ''.join([' ' for j in range(24 - len(names[i]))])
-    print(names[i] + space + "File: " + str(fileNum[i]) + "\t\tLine: " + str(lineNum[i]))
-print()
-count = 0
-for key in maxLineDict.keys():
-    count = count + 1
-    if len(maxLineDict) - count > 10:
-        continue
-    space = ''.join([' ' for i in range(10 - len(str(key)))])
-    print(str(key) + space)
+    print(names[i] + space + 'File: ' + str(file_nums[i]) + '\t\tLine: ' + str(line_nums[i]))
