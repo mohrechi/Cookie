@@ -1,0 +1,57 @@
+#include<stdio.h>
+
+main()
+{
+    char s[22];
+    int i,j,k,sum,a[20],b[20],x,y;
+    while(scanf("%s",s+1)!=EOF)
+    {
+        sum=0,j=1,k=1,b[0]=0;
+        for(i=1;s[i]!='\0';i++)
+        {
+            if(s[i]>='0'&&s[i]<='9')
+            {
+                a[j++]=s[i]-'0';
+            }
+            if(s[i]=='+'||s[i]=='-'||s[i]=='*')
+            {
+                b[k++]=s[i];
+            }
+        }
+        for(i=1;i<=k;i++)
+        {
+            if(b[i]=='*')
+            {
+                a[i+1]=a[i]*a[i+1];
+                a[i]=-1;
+                b[i]=0;
+            }
+        }
+        b[k]=0;
+        x=1,y=1;
+        for(i=1;i<j;i++)
+        {
+            if(a[i]!=-1)
+            {
+                a[x++]=a[i];
+            }
+            if(b[i]!=0)
+            {
+                b[y++]=b[i];
+            }
+        }
+        for(i=1;i<y;i++)
+        {
+            if(b[i]=='+')
+            {
+                a[i+1]=a[i]+a[i+1];
+            }
+            if(b[i]=='-')
+            {
+                a[i+1]=a[i]-a[i+1];
+            }
+        }
+        printf("%d\n",a[x-1]);
+    }
+    return 0;
+}
