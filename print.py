@@ -13,7 +13,7 @@ def write(out, level, path):
                     write(out, level + 1, path + '/' + name)
             elif level > 1:
                 url = 'https://github.com/CyberZHG/Cookie/blob/master/' + parse.quote(path + '/' + name)
-                out.write('[' + name + '](' + url + ')\n')
+                out.write('* [' + name + '](' + url + ')\n')
 
 with codecs.open('README.md', 'w', 'utf8') as out:
     write(out, 1, '.')
