@@ -18,7 +18,7 @@ int main() {
         for (int i = n - 2; i > 0; --i) {
             dp[i] = max(price[i], dp[i + 1]);
         }
-        int sum = 0;
+        long long sum = 0;
         for (int i = 0; i < n - 1; ++i) {
             if (price[i] < dp[i + 1]) {
                 sum += dp[i + 1] - price[i];
