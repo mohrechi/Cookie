@@ -1,5 +1,4 @@
 import os
-import codecs
 
 lang_file = {}
 lang_line = {}
@@ -45,12 +44,11 @@ names = []
 file_nums = []
 line_nums = []
 for name in os.listdir('.'):
-    if name[0] == '.' or name == 'summary.py':
-        continue
-    names.append(name)
-    file_nums.append(0)
-    line_nums.append(0)
-    file_nums[-1], line_nums[-1] = count_num(name)
+    if name[0] != '.' and os.path.isdir(name):
+        names.append(name)
+        file_nums.append(0)
+        line_nums.append(0)
+        file_nums[-1], line_nums[-1] = count_num(name)
 for i in range(len(names)):
     for j in range(i + 1, len(names)):
         if line_nums[i] < line_nums[j]:
