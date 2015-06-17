@@ -2,6 +2,21 @@ import os
 
 lang_file = {}
 lang_line = {}
+exp_map = {
+    'cpp': 'C++',
+    'c': 'C',
+    'java': 'Java',
+    'py': 'Python',
+    'rb': 'Ruby',
+    'scala': 'Scala',
+    'sh': 'Shell',
+    'sql': 'SQL',
+    'go': 'Go',
+    'pas': 'Pascal',
+    'php': 'PHP',
+    'hs': 'Haskell',
+    'js': 'JavaScript',
+}
 
 def count_num(path):
     global lang_file
@@ -19,7 +34,7 @@ def count_num(path):
                 current_line_num = len(file_handle.readlines())
                 file_num += 1
                 line_num += current_line_num
-                ext = file_path.split('.')[-1]
+                ext = exp_map[file_path.split('.')[-1]]
                 if ext in lang_file.keys():
                     lang_file[ext] += 1
                     lang_line[ext] += current_line_num
@@ -55,23 +70,46 @@ for i in range(len(names)):
             names[i], names[j] = names[j], names[i]
             file_nums[i], file_nums[j] = file_nums[j], file_nums[i]
             line_nums[i], line_nums[j] = line_nums[j], line_nums[i]
-
-print('Languages')
-print('=' * 52)
+    
+lang_names = []
+lang_file_nums = []
+lang_line_nums = []
 for ext in lang_file.keys():
-    print(tailing_space(ext, 20) + 
-          'File:' + leading_space(str(lang_file[ext]), 5) + 
-          '\t\tLine:' + leading_space(str(lang_line[ext]), 7))
-print('=' * 52)
+    lang_names.append(ext)
+    lang_file_nums.append(lang_file[ext])
+    lang_line_nums.append(lang_line[ext])
+for i in range(len(lang_names)):
+    for j in range(i + 1, len(lang_names)):
+        if lang_line_nums[i] < lang_line_nums[j]:
+            lang_names[i], lang_names[j] = lang_names[j], lang_names[i]
+            lang_file_nums[i], lang_file_nums[j] = lang_file_nums[j], lang_file_nums[i]
+            lang_line_nums[i], lang_line_nums[j] = lang_line_nums[j], lang_line_nums[i]
+
+print('|    Language     |  File Count  |  Line Count  |  Percentage  |')
+print('|:---------------:|-------------:|-------------:|-------------:|')
+for i in range(len(lang_names)):
+    print('|    ' + tailing_space(lang_names[i], 13) +
+          '|     ' + leading_space(str(lang_file_nums[i]), 5) + 
+          '    |   ' + leading_space(str(lang_line_nums[i]), 7) +
+          '    |   ' + leading_space(str('%.2f%%' % (100.0 * lang_line_nums[i] / sum(lang_line_nums))), 7) + 
+          '    |')
+print('|    ' + tailing_space('Total', 13) + 
+      '|     ' + leading_space(str(sum(file_nums)), 5) + 
+      '    |   ' + leading_space(str(sum(line_nums)), 7) +
+      '    |   ' + leading_space(str('%.2f%%' % 100.0), 7) + 
+      '    |')
 print('')
 
-print('Online Judges')
-print('=' * 52)
+print('|   Online Judge  |  File Count  |  Line Count  |  Percentage  |')
+print('|:---------------:|-------------:|-------------:|-------------:|')
 for i in range(len(names)):
-    print(tailing_space(names[i], 20) + 
-          'File:' + leading_space(str(file_nums[i]), 5) + 
-          '\t\tLine:' + leading_space(str(line_nums[i]), 7))
-print('=' * 52)
-print(tailing_space('Total', 20) + 
-      'File:' + leading_space(str(sum(file_nums)), 5) + 
-      '\t\tLine:' + leading_space(str(sum(line_nums)), 7))
+    print('|    ' + tailing_space(names[i], 13) + 
+          '|     ' + leading_space(str(file_nums[i]), 5) + 
+          '    |   ' + leading_space(str(line_nums[i]), 7) +
+          '    |   ' + leading_space(str('%.2f%%' % (100.0 * line_nums[i] / sum(line_nums))), 7) + 
+          '    |')
+print('|    ' + tailing_space('Total', 13) + 
+      '|     ' + leading_space(str(sum(file_nums)), 5) + 
+      '    |   ' + leading_space(str(sum(line_nums)), 7) +
+      '    |   ' + leading_space(str('%.2f%%' % 100.0), 7) + 
+      '    |')

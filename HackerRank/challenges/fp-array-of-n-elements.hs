@@ -1,0 +1,1 @@
+fn n = if n == 0 then [] else (0:(fn (n-1)))

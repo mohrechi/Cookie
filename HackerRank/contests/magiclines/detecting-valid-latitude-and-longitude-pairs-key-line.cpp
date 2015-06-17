@@ -1,0 +1,1 @@
+if (ss.get() != ')' or x < -90 or x > 90 or y < -180 or y > 180) return false;
