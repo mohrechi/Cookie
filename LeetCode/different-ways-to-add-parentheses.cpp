@@ -29,20 +29,12 @@ public:
                 } else if (j == 1) {
                     dp[i][i + j].push_back(calc(nums[i], ops[i], nums[i + 1]));
                 } else {
-                    for (auto val : dp[i + 1][i + j]) {
-                        dp[i][i + j].push_back(calc(nums[i], ops[i], val));
-                    }
-                    if (j >= 3) {
-                        for (int k = 1; k < j - 1; ++k) {
-                            for (auto v1 : dp[i][i + k]) {
-                                for (auto v2 : dp[i + k + 1][i + j]) {
-                                    dp[i][i + j].push_back(calc(v1, ops[i + k], v2));
-                                }
+                    for (int k = 0; k < j; ++k) {
+                        for (auto v1 : dp[i][i + k]) {
+                            for (auto v2 : dp[i + k + 1][i + j]) {
+                                dp[i][i + j].push_back(calc(v1, ops[i + k], v2));
                             }
                         }
-                    }
-                    for (auto val : dp[i][i + j - 1]) {
-                        dp[i][i + j].push_back(calc(val, ops[i + j - 1], nums[i + j]));
                     }
                 }
             }
