@@ -1,7 +1,6 @@
 #include <cstdio>
 
-char name[40][100] =
-{
+char name[40][100] = {
     "Washington",   "Adams",        "Jefferson",    "Madison",      "Monroe",
     "Adams",        "Jackson",      "Van Buren",    "Harrison",     "Tyler",
     "Polk",         "Taylor",       "Fillmore",     "Pierce",       "Buchanan",
@@ -12,8 +11,7 @@ char name[40][100] =
     "Johnson",      "Nixon",        "Ford",         "Carter",       "Reagan"
 };
 
-int main()
-{
+int main() {
     int n;
     scanf("%d", &n);
     printf("%s\n", name[n - 1]);
