@@ -16,6 +16,7 @@ exp_map = {
     'php': 'PHP',
     'hs': 'Haskell',
     'js': 'JavaScript',
+    'pi': 'Picat',
 }
 
 def count_num(path):
