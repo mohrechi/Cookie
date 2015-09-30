@@ -1,0 +1,1 @@
+SELECT DISTINCT(City) FROM Station WHERE LEFT(City, 1) REGEXP '[^aeiouAEIOU]' OR RIGHT(City, 1) REGEXP '[^aeiouAEIOU]';

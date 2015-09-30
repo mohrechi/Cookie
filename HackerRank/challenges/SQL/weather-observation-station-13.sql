@@ -1,0 +1,1 @@
+SELECT ROUND(SUM(Lat_N), 4) FROM Station WHERE 38.7880 < Lat_N AND Lat_N < 137.2345;

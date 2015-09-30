@@ -1,0 +1,1 @@
+SELECT DISTINCT(City) FROM Station WHERE (Id & 1) = 0;
