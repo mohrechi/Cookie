@@ -17,6 +17,7 @@ exp_map = {
     'hs': 'Haskell',
     'js': 'JavaScript',
     'pi': 'Picat',
+    'ml': 'OCaml',
 }
 
 def count_num(path):
