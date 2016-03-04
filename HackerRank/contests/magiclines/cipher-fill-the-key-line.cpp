@@ -1,1 +1,0 @@
-temp = prob[i - 1] ^ prob[i] ^ ans[i - 1];

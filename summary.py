@@ -34,15 +34,16 @@ def count_num(path):
         else:
             with open(file_path) as file_handle:
                 current_line_num = len(file_handle.readlines())
-                file_num += 1
-                line_num += current_line_num
-                ext = exp_map[file_path.split('.')[-1]]
-                if ext in lang_file.keys():
-                    lang_file[ext] += 1
-                    lang_line[ext] += current_line_num
-                else:
-                    lang_file[ext] = 1
-                    lang_line[ext] = current_line_num
+                if current_line_num >= 50:
+                    file_num += 1
+                    line_num += current_line_num
+                    ext = exp_map[file_path.split('.')[-1]]
+                    if ext in lang_file.keys():
+                        lang_file[ext] += 1
+                        lang_line[ext] += current_line_num
+                    else:
+                        lang_file[ext] = 1
+                        lang_line[ext] = current_line_num
     return file_num, line_num
 
 

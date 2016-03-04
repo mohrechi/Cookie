@@ -1,1 +1,0 @@
-SELECT AVG(Population) FROM City;

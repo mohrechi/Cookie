@@ -1,1 +1,0 @@
-a.range? b, c

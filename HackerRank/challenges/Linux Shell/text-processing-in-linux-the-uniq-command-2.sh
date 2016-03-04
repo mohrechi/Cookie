@@ -1,1 +1,0 @@
-uniq -c | tr -s " " | cut -c2- | tr "\\t" " "
