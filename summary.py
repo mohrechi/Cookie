@@ -36,7 +36,15 @@ def count_num(path):
             line_num += dir_line_num
         else:
             with open(file_path) as file_handle:
-                current_line_num = len(file_handle.readlines())
+                current_line_num = 0
+                for line in file_handle.readlines():
+                    line = line.strip()
+                    if line == '{' or line == '}':
+                        continue
+                    if line[:2] == '//' or line[:2] == '/*' or line[:1] == '#':
+                        continue
+                    if len(line) > 0:
+                        current_line_num += 1
                 if strict_mode and current_line_num <= 50:
                     continue
                 file_num += 1
