@@ -106,7 +106,7 @@ for i in range(len(lang_names)):
     print('|    ' + tailing_space(lang_names[i], 13) +
           '|     ' + leading_space(str(lang_file_nums[i]), 5) +
           '    |   ' + leading_space(str(lang_line_nums[i]), 7) +
-          '    |   ' + leading_space(str('%.2f%%' % (100.0 * lang_line_nums[i] / sum(lang_line_nums))), 7) + 
+          '    |   ' + leading_space(str('%.2f%%' % (100.0 * lang_line_nums[i] / sum(lang_line_nums))), 7) +
           '    |')
 print('|    ' + tailing_space('Total', 13) +
       '|     ' + leading_space(str(sum(file_nums)), 5) +
@@ -121,7 +121,7 @@ for i in range(len(names)):
     print('|    ' + tailing_space(names[i], 13) +
           '|     ' + leading_space(str(file_nums[i]), 5) +
           '    |   ' + leading_space(str(line_nums[i]), 7) +
-          '    |   ' + leading_space(str('%.2f%%' % (100.0 * line_nums[i] / sum(line_nums))), 7) + 
+          '    |   ' + leading_space(str('%.2f%%' % (100.0 * line_nums[i] / sum(line_nums))), 7) +
           '    |')
 print('|    ' + tailing_space('Total', 13) +
       '|     ' + leading_space(str(sum(file_nums)), 5) +
