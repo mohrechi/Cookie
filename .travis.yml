@@ -2,4 +2,8 @@ language: python
 python:
   - "2.7"
   - "3.5"
-script: python summary.py
+before_install:
+  - sudo pip install pep8
+  - sudo apt-get install haskell-platform
+  - sudo apt-get install hlint
+script: python tests.py
