@@ -1,4 +1,3 @@
-//¸´ÖÆÆ·
 #include<iostream>
 #include<map>
 #include<string>
