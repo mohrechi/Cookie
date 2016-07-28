@@ -5,6 +5,7 @@ import sys
 
 if __name__ == '__main__':
     success = True
+    os.system('python summary.py')
     for file_path in os.popen('git diff --name-only HEAD~10..HEAD').readlines():
         file_path = file_path.strip()
         print('=' * 10 + ' ' + file_path)
