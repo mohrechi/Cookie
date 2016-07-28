@@ -27,8 +27,8 @@ check n r c s | r >= n = True
                                       Set.member (r + 1, c    ) s &&
                                       Set.member (r + 1, c + 1) s &&
                                       Set.member (r + 2, c    ) s &&
-                                      (check n r (c + 1) $ Set.delete (r + 1, c - 1) $
-                                                           Set.delete (r + 1, c    ) $
-                                                           Set.delete (r + 1, c + 1) $
-                                                           Set.delete (r + 2, c    ) s)
+                                      check n r (c + 1) (Set.delete (r + 1, c - 1) $
+                                                         Set.delete (r + 1, c    ) $
+                                                         Set.delete (r + 1, c + 1) $
+                                                         Set.delete (r + 2, c    ) s)
               | otherwise = check n r (c + 1) s
