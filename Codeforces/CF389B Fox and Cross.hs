@@ -15,7 +15,7 @@ solve strs = let n = length strs
 
 initSet :: Int -> (String, Int) -> Set.Set (Int, Int)
 initSet _   ("",     _)   = Set.empty
-initSet col ((s:ss), row) = let next = initSet (col + 1) (ss, row)
+initSet col (s : ss, row) = let next = initSet (col + 1) (ss, row)
                             in if s == '#' 
                                then Set.insert (row, col) next
                                else next
@@ -23,13 +23,12 @@ initSet col ((s:ss), row) = let next = initSet (col + 1) (ss, row)
 check :: Int -> Int -> Int -> Set.Set (Int, Int) -> Bool
 check n r c s | r >= n = True
               | c >= n = check n (r + 1) 0 s
-              | Set.member (r, c) s = if Set.member (r + 1, c - 1) s &&
-                                         Set.member (r + 1, c    ) s &&
-                                         Set.member (r + 1, c + 1) s &&
-                                         Set.member (r + 2, c    ) s
-                                      then check n r (c + 1) $ Set.delete (r + 1, c - 1) $
-                                                               Set.delete (r + 1, c    ) $
-                                                               Set.delete (r + 1, c + 1) $
-                                                               Set.delete (r + 2, c    ) s
-                                      else False
+              | Set.member (r, c) s = Set.member (r + 1, c - 1) s &&
+                                      Set.member (r + 1, c    ) s &&
+                                      Set.member (r + 1, c + 1) s &&
+                                      Set.member (r + 2, c    ) s &&
+                                      (check n r (c + 1) $ Set.delete (r + 1, c - 1) $
+                                                           Set.delete (r + 1, c    ) $
+                                                           Set.delete (r + 1, c + 1) $
+                                                           Set.delete (r + 2, c    ) s)
               | otherwise = check n r (c + 1) s
