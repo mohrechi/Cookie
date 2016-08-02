@@ -1,7 +1,11 @@
 import Data.List
+import Data.Maybe (fromJust)
+import Data.ByteString (ByteString)
+import qualified Data.ByteString as B
+import qualified Data.ByteString.Char8 as C
 
 main :: IO()
-main = putStrLn . unwords . map show . solve . map read . words =<< getContents
+main = putStrLn . unwords . map show . solve . map (fst . fromJust . C.readInteger) . C.words =<< B.getContents
 
 solve :: [Integer] -> [Integer]
 solve (n:a) = let sorted = sort a
