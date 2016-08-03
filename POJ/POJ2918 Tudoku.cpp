@@ -2,7 +2,7 @@
 //NOT MINE
 using namespace std;
 
-const int nine[9][2][2] = { //每个九宫图的起点终点
+const int nine[9][2][2] = {
         {{1,1},{3,3}},
         {{1,4},{3,6}},
         {{1,7},{3,9}},
