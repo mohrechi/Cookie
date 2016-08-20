@@ -76,6 +76,7 @@ int main() {
     }
     return 0;
 }
+
 /*
 #include <cstdio>
 #include <cstdlib>
@@ -93,7 +94,6 @@ int fa[MAXN];
 long long thd = 0;
 
 int N, M;
-
 
 void addEdge(int u, int v, int w) {
     edges[u].push_back(v);
@@ -127,18 +127,15 @@ int update(int u, int v, int k) {
             d[u][i] = k;    
         }
     }
-
     for (int i = 0; i < edges[v].size(); ++i) {
         if (edges[v][i] == u) {
             d[v][i] = k;
         }
     }
-
     return old;
 }
 
 int main() {
-    
     scanf("%d%d", &N, &M);
     for (int i = 0; i < N - 1; ++i) {
         int u, v, w;
@@ -158,12 +155,10 @@ int main() {
             int old = update(u, v, k);
             if (fa[v] == u) {
                 thd += (long long)(k - old) * (child[v] + 1) * (N - 1 - child[v]);
-            }
-            else {
+            } else {
                 thd += (long long)(k - old) * (child[u] + 1) * (N - 1 - child[u]);
             }
-        }
-        else {
+        } else {
             printf("%lld\n", thd);
         }
     }
