@@ -4,8 +4,8 @@ main = print . solve (initValids [1] [] 0) . map read . words =<< getLine
 initValids :: [Integer] -> [Integer] -> Int -> [Integer]
 initValids ones zeros 64 = []
 initValids ones zeros i  = zeros ++ initValids (map (\x -> x * 2 + 1) ones)
-                                    ((map (\x -> x * 2) ones) ++ (map (\x -> x * 2 + 1) zeros))
-                                    (i + 1)
+                                               (map (* 2) ones ++ map (\x -> x * 2 + 1) zeros)
+                                               (i + 1)
 
 solve :: [Integer] -> [Integer] -> Int
 solve [] _ = 0
