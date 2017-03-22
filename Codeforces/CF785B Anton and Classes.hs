@@ -8,7 +8,7 @@ main :: IO()
 main = print . solve . map (fst . fromJust . C.readInt) . C.words =<< B.getContents
 
 solve :: [Int] -> Int
-solve (n:a) = let (p, (_:q)) = splitAt (2 * n) a
+solve (n:a) = let (p, _:q) = splitAt (2 * n) a
                   (po, pe) = split p
                   (qo, qe) = split q
                   pomax = maximum po
