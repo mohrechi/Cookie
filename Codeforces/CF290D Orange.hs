@@ -4,7 +4,7 @@ main :: IO ()
 main = putStrLn . solve . words =<< getContents
 
 solve :: [String] -> String
-solve [s, sa] = let a = chr $ (ord 'a') + (read sa) - 1
+solve [s, sa] = let a = chr $ ord 'a' + read sa - 1
                 in solve' s a
                 where solve' :: String -> Char -> String
                       solve' []    a = []
