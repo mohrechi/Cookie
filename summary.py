@@ -22,6 +22,7 @@ ext_map = {
     'js': 'JavaScript',
     'pi': 'Picat',
     'ml': 'OCaml',
+    'tcl': 'Tcl',
 }
 
 
