@@ -23,6 +23,7 @@ ext_map = {
     'pi': 'Picat',
     'ml': 'OCaml',
     'tcl': 'Tcl',
+    'io': 'Io',
 }
 
 
