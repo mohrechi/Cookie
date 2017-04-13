@@ -5,4 +5,4 @@ fib := method(a, b, n,
         return fib(b, a + b, n - 1)
     )
 )
-fib(n) println
+fib(1, 1, n) println
