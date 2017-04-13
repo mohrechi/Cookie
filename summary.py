@@ -20,10 +20,17 @@ ext_map = {
     'php': 'PHP',
     'hs': 'Haskell',
     'js': 'JavaScript',
-    'pi': 'Picat',
     'ml': 'OCaml',
     'tcl': 'Tcl',
     'io': 'Io',
+    'pike': 'Pike',
+    'ref': 'Refunge',
+    'cbl': 'COBOL',
+    'factor': 'factor',
+    'roco': 'Roco',
+    'false': 'FALSE',
+    'pi': 'Picat',
+    'Kt': 'Kotlin',
 }
 
 
