@@ -6,7 +6,7 @@ strict_mode = False
 
 lang_file = {}
 lang_line = {}
-exp_map = {
+ext_map = {
     'cpp': 'C++',
     'c': 'C',
     'java': 'Java',
@@ -20,8 +20,17 @@ exp_map = {
     'php': 'PHP',
     'hs': 'Haskell',
     'js': 'JavaScript',
-    'pi': 'Picat',
     'ml': 'OCaml',
+    'tcl': 'Tcl',
+    'io': 'Io',
+    'pike': 'Pike',
+    'ref': 'Refunge',
+    'cbl': 'COBOL',
+    'factor': 'factor',
+    'roco': 'Roco',
+    'false': 'FALSE',
+    'pi': 'Picat',
+    'Kt': 'Kotlin',
 }
 
 
@@ -51,13 +60,15 @@ def count_num(path):
                     continue
                 file_num += 1
                 line_num += current_line_num
-                ext = exp_map[file_path.split('.')[-1]]
-                if ext in lang_file.keys():
-                    lang_file[ext] += 1
-                    lang_line[ext] += current_line_num
-                else:
-                    lang_file[ext] = 1
-                    lang_line[ext] = current_line_num
+                ext = file_path.split('.')[-1]
+                if ext in ext_map:
+                    ext = ext_map[ext]
+                    if ext in lang_file.keys():
+                        lang_file[ext] += 1
+                        lang_line[ext] += current_line_num
+                    else:
+                        lang_file[ext] = 1
+                        lang_line[ext] = current_line_num
     return file_num, line_num
 
 
