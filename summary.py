@@ -24,7 +24,7 @@ ext_map = {
     'tcl': 'Tcl',
     'io': 'Io',
     'pike': 'Pike',
-    'ref': 'Refunge',
+    'bef': 'Befunge',
     'cbl': 'COBOL',
     'factor': 'factor',
     'roco': 'Roco',
