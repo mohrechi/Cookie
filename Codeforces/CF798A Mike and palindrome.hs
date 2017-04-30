@@ -7,11 +7,7 @@ output False = putStrLn "NO"
 
 solve :: String -> Bool
 solve s = let d = diff s (reverse s)
-          in if d == 2
-             then True
-             else if d == 0
-                then odd (length s)
-                else False
+          in d == 2 || d == 0 && odd (length s)
 
 diff :: String -> String -> Int
 diff "" "" = 0
